@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Feedback — Tell Us Everything</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --cream: #faf6f0;
+  --warm: #f5ece0;
+  --ink: #1a1208;
+  --ink2: #3d2e1a;
+  --ink3: #7a6650;
+  --gold: #c8891a;
+  --gold2: #e8a830;
+  --rust: #c44b2b;
+  --sage: #4a7c59;
+  --border: rgba(26,18,8,0.1);
+  --shadow: 0 2px 40px rgba(200,137,26,0.12);
+}
+
+html, body {
+  min-height: 100%;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: 'DM Sans', sans-serif;
+  overflow-x: hidden;
+}
+
+/* ── GRAIN TEXTURE ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  opacity: 0.03;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 200px;
+}
+
+/* ── BACKGROUND BLOBS ── */
+.bg-blob {
+  position: fixed; border-radius: 50%; filter: blur(80px);
+  pointer-events: none; z-index: 0;
+  animation: blobDrift ease-in-out infinite alternate;
+}
+.blob1 { width:500px;height:500px;top:-150px;right:-100px;background:rgba(200,137,26,0.12);animation-duration:14s;animation-delay:0s; }
+.blob2 { width:400px;height:400px;bottom:-100px;left:-100px;background:rgba(74,124,89,0.08);animation-duration:18s;animation-delay:-6s; }
+.blob3 { width:300px;height:300px;top:40%;left:60%;background:rgba(196,75,43,0.06);animation-duration:12s;animation-delay:-3s; }
+@keyframes blobDrift {
+  from { transform: translate(0,0) scale(1); }
+  to   { transform: translate(30px,20px) scale(1.08); }
+}
+
+/* ── LAYOUT ── */
+.page {
+  position: relative; z-index: 1;
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+/* ── LEFT PANEL ── */
+.left-panel {
+  padding: 80px 60px 80px 0;
+  display: flex; flex-direction: column; justify-content: center;
+  position: sticky; top: 0; height: 100vh;
+  animation: panelIn 0.9s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes panelIn {
+  from { opacity:0; transform:translateX(-40px); }
+  to   { opacity:1; transform:translateX(0); }
+}
+
+.lp-tag {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 28px;
+  animation: fadeUp 0.7s 0.1s both;
+}
+.lp-tag::before {
+  content:'';width:24px;height:1px;background:var(--gold);
+}
+
+.lp-heading {
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  font-size: clamp(42px, 5vw, 64px);
+  line-height: 1.05;
+  letter-spacing: -2px;
+  color: var(--ink);
+  margin-bottom: 24px;
+  animation: fadeUp 0.7s 0.18s both;
+}
+.lp-heading em {
+  font-style: italic;
+  color: var(--gold);
+  position: relative;
+  display: inline-block;
+}
+.lp-heading em::after {
+  content: '';
+  position: absolute; bottom: 2px; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--gold), transparent);
+  border-radius: 2px;
+  animation: lineGrow 0.8s 0.8s cubic-bezier(.22,1,.36,1) both;
+  transform-origin: left;
+}
+@keyframes lineGrow {
+  from { transform:scaleX(0); }
+  to   { transform:scaleX(1); }
+}
+
+.lp-sub {
+  font-size: 16px; line-height: 1.7; color: var(--ink3);
+  max-width: 360px;
+  margin-bottom: 48px;
+  animation: fadeUp 0.7s 0.26s both;
+}
+
+/* Stats */
+.lp-stats {
+  display: flex; gap: 32px;
+  animation: fadeUp 0.7s 0.34s both;
+}
+.stat { display: flex; flex-direction: column; gap: 4px; }
+.stat-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 36px; font-weight: 700;
+  color: var(--ink);
+  line-height: 1;
+}
+.stat-label { font-size: 12px; color: var(--ink3); font-weight: 500; letter-spacing: 0.5px; }
+
+/* Testimonial card */
+.testimonial {
+  margin-top: 56px;
+  background: var(--warm);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 28px 28px 28px 36px;
+  position: relative;
+  animation: fadeUp 0.7s 0.42s both;
+  overflow: hidden;
+}
+.testimonial::before {
+  content: '"';
+  position: absolute; top: -8px; left: 20px;
+  font-family: 'Playfair Display', serif;
+  font-size: 80px; color: var(--gold);
+  opacity: 0.25; line-height: 1;
+}
+.testimonial::after {
+  content: '';
+  position: absolute; left: 0; top: 20%; bottom: 20%;
+  width: 3px;
+  background: linear-gradient(180deg, transparent, var(--gold), transparent);
+  border-radius: 2px;
+}
+.test-text {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 15px; line-height: 1.7; color: var(--ink2);
+  margin-bottom: 16px;
+}
+.test-author { display: flex; align-items: center; gap: 12px; }
+.test-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold), var(--rust));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+.test-name { font-size: 13px; font-weight: 500; color: var(--ink2); }
+.test-role { font-size: 11px; color: var(--ink3); }
+
+/* Decorative dots */
+.dot-grid {
+  position: absolute; bottom: 40px; right: -20px;
+  display: grid; grid-template-columns: repeat(5,1fr); gap: 10px;
+  opacity: 0.15;
+  animation: fadeUp 0.7s 0.5s both;
+}
+.dot-grid span {
+  width: 4px; height: 4px; border-radius: 50%;
+  background: var(--gold); display: block;
+}
+
+/* ── RIGHT PANEL ── */
+.right-panel {
+  padding: 80px 0 80px 60px;
+  border-left: 1px solid var(--border);
+  animation: panelIn2 0.9s 0.1s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes panelIn2 {
+  from { opacity:0; transform:translateX(40px); }
+  to   { opacity:1; transform:translateX(0); }
+}
+
+/* Progress bar */
+.progress-wrap {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 40px;
+  animation: fadeDown 0.6s 0.2s both;
+}
+@keyframes fadeDown {
+  from { opacity:0; transform:translateY(-12px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.progress-steps { display: flex; gap: 6px; flex: 1; }
+.step-dot {
+  flex: 1; height: 3px; border-radius: 99px;
+  background: var(--border);
+  transition: background 0.4s;
+}
+.step-dot.done { background: var(--gold); }
+.step-dot.active { background: linear-gradient(90deg, var(--gold), var(--gold2)); animation: stepPulse 1.5s ease-in-out infinite; }
+@keyframes stepPulse {
+  0%,100% { opacity:1; }
+  50% { opacity:0.6; }
+}
+.progress-label { font-size: 12px; color: var(--ink3); font-weight: 500; white-space: nowrap; }
+
+/* Form steps */
+.form-step { display: none; animation: stepIn 0.5s cubic-bezier(.22,1,.36,1) both; }
+.form-step.active { display: block; }
+@keyframes stepIn {
+  from { opacity:0; transform:translateY(24px) scale(0.98); }
+  to   { opacity:1; transform:translateY(0) scale(1); }
+}
+@keyframes stepOut {
+  from { opacity:1; transform:translateY(0); }
+  to   { opacity:0; transform:translateY(-24px); }
+}
+
+/* Step heading */
+.step-heading {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700; font-size: 28px; line-height: 1.2;
+  color: var(--ink); margin-bottom: 8px;
+}
+.step-sub { font-size: 14px; color: var(--ink3); margin-bottom: 32px; line-height: 1.6; }
+
+/* ── FORM FIELDS ── */
+.field { margin-bottom: 24px; }
+label {
+  display: block; font-size: 12px; font-weight: 500;
+  letter-spacing: 0.8px; text-transform: uppercase;
+  color: var(--ink3); margin-bottom: 10px;
+}
+
+input[type="text"], input[type="email"], textarea, select {
+  width: 100%;
+  background: var(--warm);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 18px;
+  color: var(--ink);
+  font-family: 'DM Sans', sans-serif; font-size: 15px;
+  outline: none;
+  transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
+  -webkit-appearance: none;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: var(--gold);
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(200,137,26,0.1);
+}
+input::placeholder, textarea::placeholder { color: rgba(122,102,80,0.5); }
+textarea { resize: none; min-height: 120px; line-height: 1.6; }
+
+/* ── EMOJI RATING ── */
+.emoji-rating {
+  display: flex; gap: 12px;
+}
+.emoji-btn {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: 16px 8px;
+  background: var(--warm);
+  border: 1.5px solid var(--border);
+  border-radius: 16px; cursor: pointer;
+  font-size: 28px;
+  transition: transform 0.2s cubic-bezier(.34,1.56,.64,1), border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  position: relative; overflow: hidden;
+}
+.emoji-btn:hover { transform: translateY(-4px) scale(1.05); }
+.emoji-btn .emoji-label { font-size: 11px; font-weight: 500; color: var(--ink3); }
+.emoji-btn.selected {
+  border-color: var(--gold);
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(200,137,26,0.2);
+}
+.emoji-btn.selected::after {
+  content: '✓';
+  position: absolute; top: 6px; right: 8px;
+  font-size: 10px; color: var(--gold); font-weight: 700;
+}
+
+/* ── STAR RATING ── */
+.star-row { display: flex; gap: 8px; align-items: center; }
+.star {
+  font-size: 32px; cursor: pointer;
+  transition: transform 0.2s cubic-bezier(.34,1.56,.64,1), filter 0.2s;
+  filter: grayscale(1) opacity(0.4);
+  user-select: none;
+}
+.star.lit {
+  filter: grayscale(0) opacity(1) drop-shadow(0 2px 6px rgba(200,137,26,0.4));
+  transform: scale(1.1);
+  animation: starPop 0.3s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes starPop {
+  0% { transform:scale(0.8); }
+  60% { transform:scale(1.25); }
+  100% { transform:scale(1.1); }
+}
+.star-label { font-size: 13px; color: var(--ink3); margin-left: 8px; font-style: italic; font-family: 'Playfair Display', serif; }
+
+/* ── CATEGORY TAGS ── */
+.tag-group { display: flex; flex-wrap: wrap; gap: 10px; }
+.tag-btn {
+  padding: 10px 18px;
+  background: var(--warm); border: 1.5px solid var(--border);
+  border-radius: 99px; cursor: pointer; font-size: 13px; font-weight: 500;
+  color: var(--ink2); font-family: 'DM Sans', sans-serif;
+  transition: all 0.2s cubic-bezier(.34,1.56,.64,1);
+}
+.tag-btn:hover { transform: translateY(-2px); border-color: var(--gold); color: var(--gold); }
+.tag-btn.selected {
+  background: var(--gold); border-color: var(--gold);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(200,137,26,0.3);
+}
+
+/* ── RANGE SLIDER ── */
+.slider-wrap { padding: 8px 0; }
+input[type="range"] {
+  width: 100%; -webkit-appearance: none; appearance: none;
+  height: 4px; border-radius: 99px;
+  background: linear-gradient(90deg, var(--gold) var(--val,50%), var(--border) var(--val,50%));
+  outline: none; cursor: pointer;
+  border: none; padding: 0;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 2px 8px rgba(200,137,26,0.4);
+  border: 3px solid #fff;
+  transition: transform 0.2s;
+}
+input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+.slider-labels { display: flex; justify-content: space-between; margin-top: 8px; font-size: 11px; color: var(--ink3); }
+.slider-val { text-align: center; font-size: 24px; font-weight: 700; font-family: 'Playfair Display', serif; color: var(--gold); margin-bottom: 4px; }
+
+/* ── IMAGE UPLOAD ── */
+.upload-zone {
+  border: 2px dashed var(--border); border-radius: 16px;
+  padding: 32px; text-align: center; cursor: pointer;
+  transition: border-color 0.25s, background 0.25s;
+  background: transparent;
+}
+.upload-zone:hover, .upload-zone.dragover { border-color: var(--gold); background: rgba(200,137,26,0.03); }
+.uz-icon { font-size: 36px; margin-bottom: 12px; opacity: 0.5; }
+.uz-text { font-size: 14px; color: var(--ink3); line-height: 1.6; }
+.uz-text strong { color: var(--gold); }
+.file-previews { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.file-chip {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--warm); border: 1px solid var(--border);
+  border-radius: 8px; padding: 6px 10px;
+  font-size: 12px; color: var(--ink2);
+  animation: chipIn 0.3s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes chipIn { from{transform:scale(0.6);opacity:0} to{transform:scale(1);opacity:1} }
+.chip-del { cursor:pointer;color:var(--rust);font-size:14px;margin-left:4px; }
+
+/* ── NAV BUTTONS ── */
+.btn-row { display: flex; gap: 12px; margin-top: 32px; }
+.btn {
+  padding: 15px 32px; border: none; border-radius: 14px;
+  font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 15px;
+  cursor: pointer; position: relative; overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.btn-primary {
+  background: var(--ink); color: #fff; flex: 1;
+  box-shadow: 0 6px 24px rgba(26,18,8,0.25);
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(26,18,8,0.35); }
+.btn-primary:active { transform: scale(0.98); }
+.btn-ghost {
+  background: transparent; color: var(--ink2);
+  border: 1.5px solid var(--border);
+}
+.btn-ghost:hover { background: var(--warm); }
+
+/* Ripple */
+.ripple {
+  position: absolute; border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  transform: scale(0);
+  animation: rip 0.6s linear;
+  pointer-events: none;
+}
+@keyframes rip { to { transform:scale(5);opacity:0; } }
+
+/* ── SUCCESS SCREEN ── */
+#successScreen {
+  display: none; text-align: center;
+  padding: 60px 0;
+  animation: stepIn 0.6s cubic-bezier(.22,1,.36,1) both;
+}
+#successScreen.show { display: block; }
+.success-circle {
+  width: 100px; height: 100px; border-radius: 50%;
+  background: linear-gradient(135deg, rgba(200,137,26,0.15), rgba(74,124,89,0.15));
+  border: 2px solid var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 48px; margin: 0 auto 28px;
+  animation: successBounce 0.6s 0.1s cubic-bezier(.34,1.56,.64,1) both;
+  box-shadow: 0 0 40px rgba(200,137,26,0.2);
+}
+@keyframes successBounce {
+  from { transform: scale(0) rotate(-20deg); opacity:0; }
+  to   { transform: scale(1) rotate(0deg);   opacity:1; }
+}
+.success-heading {
+  font-family: 'Playfair Display', serif;
+  font-size: 36px; font-weight: 900;
+  color: var(--ink); margin-bottom: 12px;
+  letter-spacing: -1px;
+}
+.success-sub { font-size: 16px; color: var(--ink3); line-height: 1.6; max-width: 340px; margin: 0 auto 36px; }
+.confetti-row { display: flex; justify-content: center; gap: 8px; font-size: 28px; margin-bottom: 32px; }
+.confetti-row span { animation: confettiBounce 0.5s cubic-bezier(.34,1.56,.64,1) both; }
+.confetti-row span:nth-child(1) { animation-delay: 0.1s; }
+.confetti-row span:nth-child(2) { animation-delay: 0.2s; }
+.confetti-row span:nth-child(3) { animation-delay: 0.3s; }
+.confetti-row span:nth-child(4) { animation-delay: 0.4s; }
+.confetti-row span:nth-child(5) { animation-delay: 0.5s; }
+@keyframes confettiBounce {
+  from { transform: translateY(20px) scale(0); opacity:0; }
+  to   { transform: translateY(0) scale(1); opacity:1; }
+}
+
+.summary-card {
+  background: var(--warm); border: 1px solid var(--border);
+  border-radius: 16px; padding: 24px; text-align: left; margin-bottom: 28px;
+}
+.summary-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px;
+}
+.summary-row:last-child { border-bottom: none; }
+.summary-row .sr-key { color: var(--ink3); }
+.summary-row .sr-val { color: var(--ink); font-weight: 500; }
+
+/* ── FLOATING LABEL EFFECT ── */
+.field-float { position: relative; }
+.field-float input, .field-float textarea {
+  padding-top: 22px; padding-bottom: 8px;
+}
+.field-float .fl-label {
+  position: absolute; top: 14px; left: 18px;
+  font-size: 15px; color: rgba(122,102,80,0.5);
+  pointer-events: none;
+  transition: top 0.2s, font-size 0.2s, color 0.2s;
+  text-transform: none; letter-spacing: 0;
+  font-weight: 400; margin: 0;
+}
+.field-float input:focus ~ .fl-label,
+.field-float input:not(:placeholder-shown) ~ .fl-label,
+.field-float textarea:focus ~ .fl-label,
+.field-float textarea:not(:placeholder-shown) ~ .fl-label {
+  top: 6px; font-size: 11px; color: var(--gold);
+  letter-spacing: 0.8px; text-transform: uppercase; font-weight: 500;
+}
+
+/* ── CHAR COUNTER ── */
+.char-wrap { position: relative; }
+.char-count {
+  position: absolute; bottom: 12px; right: 14px;
+  font-size: 11px; color: var(--ink3); pointer-events: none;
+  transition: color 0.2s;
+}
+.char-count.warn { color: var(--rust); }
+
+/* ── RESPONSIVE ── */
+@media(max-width: 900px) {
+  .page { grid-template-columns: 1fr; padding: 0 20px; }
+  .left-panel { position: relative; height: auto; padding: 60px 0 40px; border-bottom: 1px solid var(--border); }
+  .right-panel { padding: 40px 0 60px; border-left: none; }
+  .dot-grid { display: none; }
+  .lp-stats { gap: 24px; }
+}
+@media(max-width: 500px) {
+  .emoji-rating { gap: 8px; }
+  .emoji-btn { padding: 12px 4px; font-size: 24px; }
+  .btn-row { flex-direction: column; }
+  .btn-ghost { order: 2; }
+}
+
+/* ── UTILITY ── */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(16px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+</style>
+</head>
+<body>
+
+<!-- Background -->
+<div class="bg-blob blob1"></div>
+<div class="bg-blob blob2"></div>
+<div class="bg-blob blob3"></div>
+
+<div class="page">
+
+  <!-- ══════════ LEFT PANEL ══════════ -->
+  <div class="left-panel">
+    <div class="lp-tag">Share Your Experience</div>
+
+    <h1 class="lp-heading">
+      Your voice<br>
+      <em>matters</em> to us.
+    </h1>
+
+    <p class="lp-sub">
+      We read every single response. Your honest feedback shapes everything we build next — no filter, no sugarcoating needed.
+    </p>
+
+    <div class="lp-stats">
+      <div class="stat">
+        <span class="stat-num" id="counter1">0</span>
+        <span class="stat-label">Reviews This Month</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">4.9★</span>
+        <span class="stat-label">Average Rating</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">98%</span>
+        <span class="stat-label">Would Recommend</span>
+      </div>
+    </div>
+
+    <div class="testimonial">
+      <p class="test-text" id="testQuote">The feedback form itself was so thoughtful — I ended up writing way more than I planned. They actually replied personally.</p>
+      <div class="test-author">
+        <div class="test-avatar" id="testAvatar">😊</div>
+        <div>
+          <div class="test-name" id="testName">Priya Sharma</div>
+          <div class="test-role" id="testRole">Product Designer · Mumbai</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dot-grid" id="dotGrid"></div>
+  </div>
+
+  <!-- ══════════ RIGHT PANEL ══════════ -->
+  <div class="right-panel">
+
+    <!-- Progress -->
+    <div class="progress-wrap">
+      <div class="progress-steps" id="progressSteps">
+        <div class="step-dot active" data-step="1"></div>
+        <div class="step-dot" data-step="2"></div>
+        <div class="step-dot" data-step="3"></div>
+        <div class="step-dot" data-step="4"></div>
+      </div>
+      <span class="progress-label" id="progressLabel">Step 1 of 4</span>
+    </div>
+
+    <!-- ── STEP 1: Basic Info ── -->
+    <div class="form-step active" id="step1">
+      <h2 class="step-heading">Who are you?</h2>
+      <p class="step-sub">Just the basics — we promise this won't take long.</p>
+
+      <div class="field field-float">
+        <input type="text" id="fname" placeholder=" ">
+        <label class="fl-label">Your Full Name</label>
+      </div>
+
+      <div class="field field-float">
+        <input type="email" id="femail" placeholder=" ">
+        <label class="fl-label">Email Address</label>
+      </div>
+
+      <div class="field">
+        <label>How did you find us?</label>
+        <select id="fhow">
+          <option value="" disabled selected>Choose one…</option>
+          <option>Social Media</option>
+          <option>Friend / Colleague</option>
+          <option>Search Engine</option>
+          <option>App Store</option>
+          <option>Advertisement</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Which category fits you best?</label>
+        <div class="tag-group" id="categoryGroup">
+          <div class="tag-btn" onclick="toggleTag(this)">👨‍💻 Developer</div>
+          <div class="tag-btn" onclick="toggleTag(this)">🎨 Designer</div>
+          <div class="tag-btn" onclick="toggleTag(this)">📊 Manager</div>
+          <div class="tag-btn" onclick="toggleTag(this)">🎓 Student</div>
+          <div class="tag-btn" onclick="toggleTag(this)">🏢 Business</div>
+          <div class="tag-btn" onclick="toggleTag(this)">✨ Other</div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="nextStep(1)">
+          Continue →
+        </button>
+      </div>
+    </div>
+
+    <!-- ── STEP 2: Ratings ── -->
+    <div class="form-step" id="step2">
+      <h2 class="step-heading">How do you feel?</h2>
+      <p class="step-sub">Pick the emoji that matches your overall vibe.</p>
+
+      <div class="field">
+        <label>Overall Experience</label>
+        <div class="emoji-rating" id="emojiGroup">
+          <button class="emoji-btn" data-val="1" onclick="selectEmoji(this)">😤<span class="emoji-label">Awful</span></button>
+          <button class="emoji-btn" data-val="2" onclick="selectEmoji(this)">😕<span class="emoji-label">Meh</span></button>
+          <button class="emoji-btn" data-val="3" onclick="selectEmoji(this)">😐<span class="emoji-label">Okay</span></button>
+          <button class="emoji-btn" data-val="4" onclick="selectEmoji(this)">😊<span class="emoji-label">Good</span></button>
+          <button class="emoji-btn" data-val="5" onclick="selectEmoji(this)">🤩<span class="emoji-label">Loved it!</span></button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Rate Us Out of 5</label>
+        <div class="star-row" id="starRow">
+          <span class="star" data-val="1" onclick="rateStar(1)">⭐</span>
+          <span class="star" data-val="2" onclick="rateStar(2)">⭐</span>
+          <span class="star" data-val="3" onclick="rateStar(3)">⭐</span>
+          <span class="star" data-val="4" onclick="rateStar(4)">⭐</span>
+          <span class="star" data-val="5" onclick="rateStar(5)">⭐</span>
+          <span class="star-label" id="starLabel">Not rated</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>How likely to recommend us? (0–10)</label>
+        <div class="slider-wrap">
+          <div class="slider-val" id="npsVal">5</div>
+          <input type="range" min="0" max="10" value="5" id="npsSlider" oninput="updateNps(this.value)">
+          <div class="slider-labels"><span>Never 😬</span><span>Absolutely 🤩</span></div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-ghost" onclick="prevStep(2)">← Back</button>
+        <button class="btn btn-primary" onclick="nextStep(2)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- ── STEP 3: Detailed Feedback ── -->
+    <div class="form-step" id="step3">
+      <h2 class="step-heading">Tell us more.</h2>
+      <p class="step-sub">The details you share become tomorrow's improvements.</p>
+
+      <div class="field">
+        <label>What did you love most?</label>
+        <div class="tag-group" id="loveGroup">
+          <div class="tag-btn" onclick="toggleTag(this)">⚡ Speed</div>
+          <div class="tag-btn" onclick="toggleTag(this)">🎨 Design</div>
+          <div class="tag-btn" onclick="toggleTag(this)">🛠 Features</div>
+          <div class="tag-btn" onclick="toggleTag(this)">🤝 Support</div>
+          <div class="tag-btn" onclick="toggleTag(this)">💰 Pricing</div>
+          <div class="tag-btn" onclick="toggleTag(this)">📱 Mobile UX</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>What could be better?</label>
+        <div class="char-wrap">
+          <textarea id="fimprove" placeholder="Be brutally honest — we can take it! 😄" maxlength="500" oninput="updateChar(this,'improveCount')"></textarea>
+          <span class="char-count" id="improveCount">0 / 500</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Any specific suggestions?</label>
+        <div class="char-wrap">
+          <textarea id="fsuggestion" placeholder="Feature ideas, bug reports, or wild dreams…" maxlength="500" oninput="updateChar(this,'suggestCount')"></textarea>
+          <span class="char-count" id="suggestCount">0 / 500</span>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-ghost" onclick="prevStep(3)">← Back</button>
+        <button class="btn btn-primary" onclick="nextStep(3)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- ── STEP 4: Final ── -->
+    <div class="form-step" id="step4">
+      <h2 class="step-heading">Almost there!</h2>
+      <p class="step-sub">Upload a screenshot (optional) and share any final thoughts.</p>
+
+      <div class="field">
+        <label>Attach Screenshot (Optional)</label>
+        <div class="upload-zone" id="uploadZone"
+          ondragover="handleDrag(event, true)"
+          ondragleave="handleDrag(event, false)"
+          ondrop="handleDrop(event)"
+          onclick="document.getElementById('fileUpload').click()">
+          <div class="uz-icon">📎</div>
+          <div class="uz-text">
+            <strong>Click to upload</strong> or drag & drop<br>
+            PNG, JPG, GIF up to 5MB
+          </div>
+          <div class="file-previews" id="filePreviews"></div>
+        </div>
+        <input type="file" id="fileUpload" accept="image/*" style="display:none" multiple onchange="handleFiles(this.files)">
+      </div>
+
+      <div class="field field-float">
+        <textarea id="ffinal" placeholder=" " style="min-height:100px"></textarea>
+        <label class="fl-label">Final thoughts…</label>
+      </div>
+
+      <div class="field">
+        <label style="display:flex;align-items:center;gap:12px;text-transform:none;letter-spacing:0;font-size:14px;cursor:pointer">
+          <input type="checkbox" id="fcontact" style="width:18px;height:18px;accent-color:var(--gold);flex-shrink:0">
+          I'm happy to be contacted for a follow-up chat 💬
+        </label>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-ghost" onclick="prevStep(4)">← Back</button>
+        <button class="btn btn-primary" id="submitBtn" onclick="submitFeedback()">
+          Submit Feedback ✨
+        </button>
+      </div>
+    </div>
+
+    <!-- ── SUCCESS ── -->
+    <div id="successScreen">
+      <div class="success-circle">🎉</div>
+      <div class="confetti-row">
+        <span>🌟</span><span>💛</span><span>✨</span><span>💛</span><span>🌟</span>
+      </div>
+      <h2 class="success-heading">Thank you!</h2>
+      <p class="success-sub">Your feedback has been received and will be read by our team within 24 hours.</p>
+
+      <div class="summary-card" id="summaryCard"></div>
+
+      <button class="btn btn-primary" style="width:100%" onclick="resetForm()">
+        Submit Another Response
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ════════════════════════════
+   STATE
+════════════════════════════ */
+let state = {
+  step: 1,
+  name: '', email: '', how: '', category: '',
+  emoji: 0, stars: 0, nps: 5,
+  loves: [], improve: '', suggestion: '',
+  files: [], final: '', contact: false
+};
+
+const starLabels = ['','Poor 😟','Below Average 😕','Average 😐','Good 😊','Excellent 🤩'];
+const npsLabels  = ['Definitely not 😬','😬','😕','😕','😐','Neutral 😐','😊','😊','Good 😄','Great 🤩','Absolutely! 🤩'];
+
+/* ════════════════════════════
+   STEP NAVIGATION
+════════════════════════════ */
+function nextStep(from) {
+  if (from === 1 && !validateStep1()) return;
+  if (from === 2 && !validateStep2()) return;
+  goToStep(from + 1);
+}
+function prevStep(from) { goToStep(from - 1); }
+
+function goToStep(n) {
+  document.getElementById('step' + state.step).classList.remove('active');
+  state.step = n;
+  document.getElementById('step' + n).classList.add('active');
+  updateProgress(n);
+  // Scroll right panel to top
+  document.querySelector('.right-panel').scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateProgress(step) {
+  const dots = document.querySelectorAll('.step-dot');
+  dots.forEach((d, i) => {
+    d.classList.remove('active','done');
+    if (i + 1 < step) d.classList.add('done');
+    if (i + 1 === step) d.classList.add('active');
+  });
+  document.getElementById('progressLabel').textContent = `Step ${step} of 4`;
+}
+
+/* ════════════════════════════
+   VALIDATION
+════════════════════════════ */
+function validateStep1() {
+  const name  = document.getElementById('fname').value.trim();
+  const email = document.getElementById('femail').value.trim();
+  if (!name) { shake('fname'); showToast('Please enter your name'); return false; }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { shake('femail'); showToast('Please enter a valid email'); return false; }
+  state.name  = name;
+  state.email = email;
+  state.how   = document.getElementById('fhow').value;
+  return true;
+}
+function validateStep2() {
+  if (!state.stars) { showToast('Please give us a star rating ⭐'); return false; }
+  if (!state.emoji) { showToast('Please pick an emoji reaction 😊'); return false; }
+  return true;
+}
+
+function shake(id) {
+  const el = document.getElementById(id);
+  el.style.animation = 'none';
+  el.style.borderColor = 'var(--rust)';
+  el.style.boxShadow   = '0 0 0 4px rgba(196,75,43,0.15)';
+  setTimeout(() => { el.style.borderColor=''; el.style.boxShadow=''; }, 1500);
+}
+
+/* ════════════════════════════
+   EMOJI RATING
+════════════════════════════ */
+function selectEmoji(el) {
+  document.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  state.emoji = parseInt(el.dataset.val);
+}
+
+/* ════════════════════════════
+   STAR RATING
+════════════════════════════ */
+function rateStar(val) {
+  state.stars = val;
+  document.querySelectorAll('.star').forEach((s, i) => {
+    s.classList.toggle('lit', i < val);
+  });
+  document.getElementById('starLabel').textContent = starLabels[val];
+}
+
+document.querySelectorAll('.star').forEach(star => {
+  star.addEventListener('mouseenter', () => {
+    const v = parseInt(star.dataset.val);
+    document.querySelectorAll('.star').forEach((s, i) => {
+      s.style.filter = i < v ? 'grayscale(0) opacity(0.7)' : 'grayscale(1) opacity(0.3)';
+    });
+  });
+  star.addEventListener('mouseleave', () => {
+    document.querySelectorAll('.star').forEach((s, i) => {
+      s.style.filter = '';
+      s.classList.toggle('lit', i < state.stars);
+    });
+  });
+});
+
+/* ════════════════════════════
+   NPS SLIDER
+════════════════════════════ */
+function updateNps(val) {
+  state.nps = parseInt(val);
+  document.getElementById('npsVal').textContent = val;
+  const pct = (val / 10 * 100) + '%';
+  document.getElementById('npsSlider').style.setProperty('--val', pct);
+}
+// Init slider gradient
+document.getElementById('npsSlider').style.setProperty('--val', '50%');
+
+/* ════════════════════════════
+   TAG TOGGLE
+════════════════════════════ */
+function toggleTag(el) {
+  el.classList.toggle('selected');
+}
+
+/* ════════════════════════════
+   CHAR COUNTER
+════════════════════════════ */
+function updateChar(el, countId) {
+  const len = el.value.length;
+  const max = parseInt(el.maxLength);
+  const counter = document.getElementById(countId);
+  counter.textContent = len + ' / ' + max;
+  counter.classList.toggle('warn', len > max * 0.85);
+}
+
+/* ════════════════════════════
+   FILE UPLOAD
+════════════════════════════ */
+function handleDrag(e, over) {
+  e.preventDefault();
+  document.getElementById('uploadZone').classList.toggle('dragover', over);
+}
+function handleDrop(e) {
+  e.preventDefault();
+  handleDrag(e, false);
+  handleFiles(e.dataTransfer.files);
+}
+function handleFiles(files) {
+  Array.from(files).forEach(file => {
+    if (!file.type.startsWith('image/')) return;
+    if (file.size > 5 * 1024 * 1024) { showToast('File too large (max 5MB)'); return; }
+    state.files.push(file);
+    const chip = document.createElement('div');
+    chip.className = 'file-chip';
+    chip.innerHTML = `📷 ${file.name.slice(0,20)}… <span class="chip-del" onclick="removeFile(this,'${file.name}')">✕</span>`;
+    document.getElementById('filePreviews').appendChild(chip);
+  });
+}
+function removeFile(el, name) {
+  state.files = state.files.filter(f => f.name !== name);
+  el.parentElement.remove();
+}
+
+/* ════════════════════════════
+   SUBMIT
+════════════════════════════ */
+async function submitFeedback() {
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Sending…';
+
+  // Gather remaining state
+  state.improve    = document.getElementById('fimprove').value;
+  state.suggestion = document.getElementById('fsuggestion').value;
+  state.final      = document.getElementById('ffinal').value;
+  state.contact    = document.getElementById('fcontact').checked;
+  state.loves      = Array.from(document.querySelectorAll('#loveGroup .tag-btn.selected')).map(el => el.textContent.trim());
+
+  // Simulate API call
+  await new Promise(r => setTimeout(r, 1500));
+
+  // Hide all steps
+  document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+  document.querySelector('.progress-wrap').style.display = 'none';
+
+  // Build summary
+  const emojiMap = {1:'😤 Awful',2:'😕 Meh',3:'😐 Okay',4:'😊 Good',5:'🤩 Loved it!'};
+  document.getElementById('summaryCard').innerHTML = `
+    <div class="summary-row"><span class="sr-key">Name</span><span class="sr-val">${state.name}</span></div>
+    <div class="summary-row"><span class="sr-key">Overall</span><span class="sr-val">${emojiMap[state.emoji] || '—'}</span></div>
+    <div class="summary-row"><span class="sr-key">Stars</span><span class="sr-val">${'⭐'.repeat(state.stars)} (${state.stars}/5)</span></div>
+    <div class="summary-row"><span class="sr-key">NPS Score</span><span class="sr-val">${state.nps}/10 — ${npsLabels[state.nps]}</span></div>
+    <div class="summary-row"><span class="sr-key">Loved</span><span class="sr-val">${state.loves.length ? state.loves.join(', ') : '—'}</span></div>
+    <div class="summary-row"><span class="sr-key">Files</span><span class="sr-val">${state.files.length ? state.files.length + ' file(s)' : 'None'}</span></div>
+    <div class="summary-row"><span class="sr-key">Follow-up</span><span class="sr-val">${state.contact ? '✅ Yes please' : 'Not needed'}</span></div>
+  `;
+
+  document.getElementById('successScreen').classList.add('show');
+}
+
+/* ════════════════════════════
+   RESET
+════════════════════════════ */
+function resetForm() {
+  state = { step:1, name:'', email:'', how:'', category:'', emoji:0, stars:0, nps:5, loves:[], improve:'', suggestion:'', files:[], final:'', contact:false };
+  document.querySelectorAll('input[type=text], input[type=email], textarea').forEach(el => el.value='');
+  document.querySelectorAll('.tag-btn, .emoji-btn').forEach(el => el.classList.remove('selected'));
+  document.querySelectorAll('.star').forEach(s => s.classList.remove('lit'));
+  document.getElementById('starLabel').textContent = 'Not rated';
+  document.getElementById('npsSlider').value = 5;
+  updateNps(5);
+  document.getElementById('filePreviews').innerHTML = '';
+  document.getElementById('successScreen').classList.remove('show');
+  document.querySelector('.progress-wrap').style.display = 'flex';
+  document.getElementById('submitBtn').disabled = false;
+  document.getElementById('submitBtn').textContent = 'Submit Feedback ✨';
+  goToStep(1);
+}
+
+/* ════════════════════════════
+   TOAST
+════════════════════════════ */
+let toastEl, toastTimer;
+function showToast(msg) {
+  if (!toastEl) {
+    toastEl = document.createElement('div');
+    toastEl.style.cssText = `
+      position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);
+      background:var(--ink);color:var(--cream);padding:12px 24px;border-radius:12px;
+      font-size:14px;font-weight:500;z-index:999;opacity:0;transition:all 0.3s;
+      white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,0.25);
+      font-family:'DM Sans',sans-serif;
+    `;
+    document.body.appendChild(toastEl);
+  }
+  toastEl.textContent = msg;
+  toastEl.style.opacity = '1';
+  toastEl.style.transform = 'translateX(-50%) translateY(0)';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
+    toastEl.style.opacity = '0';
+    toastEl.style.transform = 'translateX(-50%) translateY(20px)';
+  }, 2500);
+}
+
+/* ════════════════════════════
+   RIPPLE ON BUTTONS
+════════════════════════════ */
+document.addEventListener('click', e => {
+  const btn = e.target.closest('.btn');
+  if (!btn) return;
+  const r = document.createElement('span');
+  r.classList.add('ripple');
+  const rect = btn.getBoundingClientRect();
+  const size = Math.max(rect.width, rect.height) * 1.5;
+  r.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX-rect.left-size/2}px;top:${e.clientY-rect.top-size/2}px`;
+  btn.appendChild(r);
+  setTimeout(() => r.remove(), 700);
+});
+
+/* ════════════════════════════
+   ANIMATED COUNTER
+════════════════════════════ */
+function animateCounter(el, target, duration=2000) {
+  let start = 0;
+  const step = timestamp => {
+    if (!start) start = timestamp;
+    const progress = Math.min((timestamp - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.floor(eased * target).toLocaleString();
+    if (progress < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+setTimeout(() => animateCounter(document.getElementById('counter1'), 2847), 600);
+
+/* ════════════════════════════
+   DOT GRID
+════════════════════════════ */
+const dotGrid = document.getElementById('dotGrid');
+for (let i = 0; i < 25; i++) {
+  const s = document.createElement('span');
+  dotGrid.appendChild(s);
+}
+
+/* ════════════════════════════
+   ROTATING TESTIMONIALS
+════════════════════════════ */
+const testimonials = [
+  { text: "The feedback form itself was so thoughtful — I ended up writing way more than I planned. They actually replied personally.", name: "Priya Sharma", role: "Product Designer · Mumbai", avatar: "😊" },
+  { text: "Rarely do companies actually read feedback. These guys implemented my suggestion within two weeks. Blown away!", name: "Arjun Mehta", role: "Software Engineer · Pune", avatar: "🤩" },
+  { text: "Honest, clean, fast. Filled it out in 3 minutes. Love that they show a summary at the end.", name: "Sara Khan", role: "UX Researcher · Delhi", avatar: "✨" },
+  { text: "This is what feedback forms should look like. Not a boring survey but an actual conversation.", name: "Rohan Verma", role: "Startup Founder · Bangalore", avatar: "🚀" },
+];
+let tIdx = 0;
+setInterval(() => {
+  tIdx = (tIdx + 1) % testimonials.length;
+  const t = testimonials[tIdx];
+  const el = document.querySelector('.testimonial');
+  el.style.opacity = '0'; el.style.transform = 'translateY(8px)';
+  setTimeout(() => {
+    document.getElementById('testQuote').textContent = t.text;
+    document.getElementById('testName').textContent  = t.name;
+    document.getElementById('testRole').textContent  = t.role;
+    document.getElementById('testAvatar').textContent = t.avatar;
+    el.style.transition = 'opacity 0.5s, transform 0.5s';
+    el.style.opacity = '1'; el.style.transform = '';
+    setTimeout(() => el.style.transition = '', 500);
+  }, 300);
+}, 5000);
+
+/* Enter key moves to next field */
+document.querySelectorAll('input').forEach(inp => {
+  inp.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      const all = Array.from(document.querySelectorAll('#step' + state.step + ' input, #step' + state.step + ' textarea'));
+      const idx = all.indexOf(inp);
+      if (idx < all.length - 1) all[idx + 1].focus();
+    }
+  });
+});
+</script>
+</body>
+</html>
