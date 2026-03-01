@@ -1,0 +1,1721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NoteReader — Device Themes</title>
+<link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&family=Nunito:wght@300;400;600;700;800;900&family=Roboto:wght@300;400;500;700&family=Noto+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+/* ═══════════════════════════════════════════
+   BASE RESET & VARIABLES
+═══════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+
+/* ═══════════════════════════════════════════
+   THEME VARIABLES
+═══════════════════════════════════════════ */
+body.theme-iphone {
+  --bg: #000000;
+  --surface: #1c1c1e;
+  --surface2: #2c2c2e;
+  --surface3: #3a3a3c;
+  --accent: #007aff;
+  --accent2: #30d158;
+  --accent3: #ff375f;
+  --accent4: #ff9f0a;
+  --text: #ffffff;
+  --text2: #ebebf5cc;
+  --text3: #ebebf599;
+  --border: rgba(255,255,255,0.12);
+  --shadow: 0 20px 60px rgba(0,0,0,0.6);
+  --radius-device: 54px;
+  --font: 'Nunito', -apple-system, sans-serif;
+  --toolbar-bg: rgba(28,28,30,0.92);
+  --page-bg: #ffffff;
+  --highlight-default: rgba(255,214,0,0.45);
+  --status-bar: 50px;
+  --nav-bar: 83px;
+}
+body.theme-samsung-a {
+  --bg: #0a0a14;
+  --surface: #12121f;
+  --surface2: #1a1a2e;
+  --surface3: #252540;
+  --accent: #1db954;
+  --accent2: #00b4d8;
+  --accent3: #e94560;
+  --accent4: #f5a623;
+  --text: #ffffff;
+  --text2: rgba(255,255,255,0.8);
+  --text3: rgba(255,255,255,0.5);
+  --border: rgba(29,185,84,0.2);
+  --shadow: 0 20px 60px rgba(0,0,0,0.8);
+  --radius-device: 44px;
+  --font: 'Roboto', sans-serif;
+  --toolbar-bg: rgba(18,18,31,0.95);
+  --page-bg: #ffffff;
+  --highlight-default: rgba(29,185,84,0.35);
+  --status-bar: 44px;
+  --nav-bar: 56px;
+}
+body.theme-ipad {
+  --bg: #f2f2f7;
+  --surface: #ffffff;
+  --surface2: #f2f2f7;
+  --surface3: #e5e5ea;
+  --accent: #007aff;
+  --accent2: #34c759;
+  --accent3: #ff3b30;
+  --accent4: #ff9500;
+  --text: #000000;
+  --text2: rgba(0,0,0,0.7);
+  --text3: rgba(0,0,0,0.4);
+  --border: rgba(0,0,0,0.1);
+  --shadow: 0 8px 30px rgba(0,0,0,0.12);
+  --radius-device: 20px;
+  --font: 'Nunito', -apple-system, sans-serif;
+  --toolbar-bg: rgba(255,255,255,0.92);
+  --page-bg: #ffffff;
+  --highlight-default: rgba(255,204,0,0.4);
+  --status-bar: 24px;
+  --nav-bar: 0px;
+}
+body.theme-samsung-tab {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #21262d;
+  --surface3: #30363d;
+  --accent: #58a6ff;
+  --accent2: #3fb950;
+  --accent3: #f85149;
+  --accent4: #d29922;
+  --text: #c9d1d9;
+  --text2: rgba(201,209,217,0.8);
+  --text3: rgba(201,209,217,0.5);
+  --border: rgba(48,54,61,0.8);
+  --shadow: 0 16px 50px rgba(0,0,0,0.7);
+  --radius-device: 16px;
+  --font: 'Noto Sans', sans-serif;
+  --toolbar-bg: rgba(22,27,34,0.96);
+  --page-bg: #ffffff;
+  --highlight-default: rgba(88,166,255,0.35);
+  --status-bar: 28px;
+  --nav-bar: 48px;
+}
+
+/* ═══════════════════════════════════════════
+   THEME SELECTOR SCREEN
+═══════════════════════════════════════════ */
+#themeScreen {
+  position: fixed; inset: 0; z-index: 1000;
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column;
+  background: linear-gradient(135deg, #0a0a0f 0%, #13131f 50%, #0a0a0f 100%);
+  overflow: hidden;
+}
+#themeScreen.exit {
+  animation: screenExit 0.6s cubic-bezier(.77,0,.18,1) forwards;
+}
+@keyframes screenExit {
+  to { opacity: 0; transform: scale(1.05); pointer-events: none; }
+}
+
+.ts-bg {
+  position: absolute; inset: 0; overflow: hidden;
+}
+.ts-orb {
+  position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.2;
+  animation: orbDrift 15s ease-in-out infinite alternate;
+}
+.ts-orb:nth-child(1){ width:600px;height:600px;top:-200px;left:-200px;background:radial-gradient(circle,#007aff,transparent);animation-delay:0s; }
+.ts-orb:nth-child(2){ width:500px;height:500px;bottom:-150px;right:-150px;background:radial-gradient(circle,#1db954,transparent);animation-delay:-5s; }
+.ts-orb:nth-child(3){ width:400px;height:400px;top:30%;left:40%;background:radial-gradient(circle,#58a6ff,transparent);animation-delay:-10s;opacity:0.12; }
+@keyframes orbDrift {
+  from { transform: translate(0,0) scale(1); }
+  to   { transform: translate(30px,40px) scale(1.1); }
+}
+/* Grid */
+.ts-bg::after {
+  content:'';position:absolute;inset:0;
+  background-image: linear-gradient(rgba(255,255,255,0.02) 1px,transparent 1px), linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px);
+  background-size: 60px 60px;
+}
+
+.ts-header {
+  text-align: center; margin-bottom: 56px; z-index: 1;
+  animation: tsHeaderIn 0.8s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes tsHeaderIn {
+  from { opacity:0; transform:translateY(-30px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.ts-logo {
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  margin-bottom: 12px;
+}
+.ts-logo-icon {
+  width: 52px; height: 52px; border-radius: 14px;
+  background: linear-gradient(135deg, #007aff, #58a6ff);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; box-shadow: 0 0 30px rgba(0,122,255,0.4);
+}
+.ts-logo-text {
+  font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 32px;
+  background: linear-gradient(90deg, #fff, #ffffffaa);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  letter-spacing: -1px;
+}
+.ts-subtitle {
+  font-family: 'Nunito', sans-serif; font-weight: 400; font-size: 16px;
+  color: rgba(255,255,255,0.45); letter-spacing: 0.5px;
+}
+
+/* Device cards grid */
+.ts-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  z-index: 1;
+  padding: 0 20px;
+  animation: tsGridIn 0.8s 0.15s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes tsGridIn {
+  from { opacity:0; transform:translateY(40px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+.device-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 24px;
+  padding: 32px 24px;
+  cursor: pointer;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s cubic-bezier(.34,1.56,.64,1), border-color 0.3s, box-shadow 0.3s;
+  backdrop-filter: blur(20px);
+}
+.device-card::before {
+  content:''; position:absolute;inset:0;border-radius:24px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.06), transparent);
+  opacity:0; transition: opacity 0.3s;
+}
+.device-card:hover { transform: translateY(-8px) scale(1.02); }
+.device-card:hover::before { opacity:1; }
+
+/* Individual device card colors */
+.device-card[data-theme="iphone"] { --dc: #007aff; }
+.device-card[data-theme="samsung-a"] { --dc: #1db954; }
+.device-card[data-theme="ipad"] { --dc: #ff9500; }
+.device-card[data-theme="samsung-tab"] { --dc: #58a6ff; }
+
+.device-card:hover { border-color: var(--dc); box-shadow: 0 20px 50px rgba(0,0,0,0.4), 0 0 0 1px var(--dc), 0 0 40px color-mix(in srgb, var(--dc) 20%, transparent); }
+
+.dc-device {
+  font-size: 72px; margin-bottom: 20px; display: block;
+  filter: drop-shadow(0 8px 20px rgba(0,0,0,0.4));
+  transition: transform 0.3s;
+}
+.device-card:hover .dc-device { transform: scale(1.1) rotate(-3deg); }
+
+.dc-brand {
+  font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 18px;
+  color: #fff; margin-bottom: 4px;
+}
+.dc-model {
+  font-family: 'Nunito', sans-serif; font-weight: 400; font-size: 13px;
+  color: rgba(255,255,255,0.45); margin-bottom: 20px;
+}
+.dc-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px; border-radius: 99px;
+  background: color-mix(in srgb, var(--dc) 20%, transparent);
+  border: 1px solid color-mix(in srgb, var(--dc) 40%, transparent);
+  font-size: 12px; font-weight: 600; color: var(--dc);
+  font-family: 'Nunito', sans-serif;
+}
+.dc-features {
+  margin-top: 16px; display: flex; flex-direction: column; gap: 6px;
+}
+.dc-feat {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px; color: rgba(255,255,255,0.4);
+  font-family: 'Nunito', sans-serif;
+}
+.dc-feat::before { content:'✓'; color: var(--dc); font-weight: 700; }
+
+/* Choose btn */
+.dc-choose {
+  margin-top: 20px; width: 100%; padding: 12px;
+  background: var(--dc); border: none; border-radius: 12px;
+  color: #fff; font-family: 'Nunito', sans-serif; font-weight: 800;
+  font-size: 14px; cursor: pointer; letter-spacing: 0.5px;
+  transition: opacity 0.2s, transform 0.2s;
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--dc) 40%, transparent);
+}
+.dc-choose:hover { opacity: 0.9; transform: scale(1.02); }
+.dc-choose:active { transform: scale(0.98); }
+
+/* ═══════════════════════════════════════════
+   MAIN APP SHELL
+═══════════════════════════════════════════ */
+#app {
+  position: fixed; inset: 0;
+  display: none; flex-direction: column;
+  background: var(--bg);
+  font-family: var(--font);
+  color: var(--text);
+  animation: appIn 0.5s cubic-bezier(.22,1,.36,1) both;
+}
+#app.visible { display: flex; }
+@keyframes appIn {
+  from { opacity:0; transform:scale(0.97); }
+  to   { opacity:1; transform:scale(1); }
+}
+
+/* ── DEVICE FRAME ── */
+/* iPhone frame wrapper */
+body.theme-iphone #app,
+body.theme-samsung-a #app {
+  max-width: 430px;
+  margin: 0 auto;
+  border-radius: var(--radius-device);
+  border: 1px solid rgba(255,255,255,0.15);
+  box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,0.1);
+  height: 932px;
+  top: 50%;
+  transform: translateY(-50%);
+  position: absolute;
+  left: 50%;
+  margin-left: -215px;
+  overflow: hidden;
+  background: var(--bg);
+}
+body.theme-iphone #app.visible,
+body.theme-samsung-a #app.visible {
+  display: flex;
+}
+
+/* iPad frame */
+body.theme-ipad #app {
+  max-width: 1024px;
+  max-height: 768px;
+  margin: 0 auto;
+  border-radius: var(--radius-device);
+  border: 1px solid rgba(0,0,0,0.2);
+  box-shadow: var(--shadow);
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  overflow: hidden;
+}
+
+/* Samsung Tab */
+body.theme-samsung-tab #app {
+  max-width: 1080px;
+  max-height: 800px;
+  margin: 0 auto;
+  border-radius: var(--radius-device);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  overflow: hidden;
+}
+
+/* Desktop background when device framed */
+body.theme-iphone,
+body.theme-samsung-a {
+  background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a0f 100%);
+}
+body.theme-ipad {
+  background: linear-gradient(135deg, #c7d2fe 0%, #dbeafe 50%, #e0e7ff 100%);
+}
+body.theme-samsung-tab {
+  background: radial-gradient(ellipse at center, #1a1a2e 0%, #0d1117 100%);
+}
+
+/* ── STATUS BAR ── */
+.status-bar {
+  height: var(--status-bar); min-height: var(--status-bar);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 20px;
+  background: var(--surface);
+  flex-shrink: 0;
+  position: relative; z-index: 10;
+}
+body.theme-iphone .status-bar,
+body.theme-samsung-a .status-bar {
+  padding-top: 14px;
+}
+.sb-left { font-size: 12px; font-weight: 600; letter-spacing: -0.3px; }
+.sb-right { display: flex; gap: 6px; align-items: center; font-size: 11px; }
+.sb-icon { opacity: 0.8; }
+
+/* iPhone notch */
+body.theme-iphone .status-bar::after {
+  content: '';
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 120px; height: 34px;
+  background: #000;
+  border-radius: 0 0 20px 20px;
+}
+
+/* Samsung A punch-hole */
+body.theme-samsung-a .status-bar::after {
+  content: '';
+  position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
+  width: 12px; height: 12px;
+  background: #000;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px rgba(255,255,255,0.1);
+}
+
+/* ── TOP TOOLBAR ── */
+.top-toolbar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 16px;
+  background: var(--toolbar-bg);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0; z-index: 9;
+}
+body.theme-ipad .top-toolbar,
+body.theme-samsung-tab .top-toolbar {
+  padding: 10px 24px;
+  gap: 16px;
+}
+
+.tb-btn {
+  display: flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; border-radius: 10px;
+  background: transparent; border: none; cursor: pointer;
+  color: var(--text2); font-size: 18px;
+  transition: background 0.2s, color 0.2s, transform 0.15s;
+  position: relative;
+}
+.tb-btn:hover { background: var(--surface2); color: var(--text); }
+.tb-btn:active { transform: scale(0.9); }
+.tb-btn.active { background: color-mix(in srgb, var(--accent) 20%, transparent); color: var(--accent); }
+.tb-btn.danger.active { background: color-mix(in srgb, var(--accent3) 20%, transparent); color: var(--accent3); }
+
+.tb-sep { width: 1px; height: 24px; background: var(--border); flex-shrink: 0; }
+.tb-title {
+  flex: 1; font-weight: 700; font-size: 15px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  text-align: center;
+}
+.tb-page { font-size: 13px; color: var(--text3); white-space: nowrap; }
+
+/* ── COLOR PICKER ROW ── */
+.color-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 16px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0; z-index: 8;
+  flex-wrap: wrap;
+}
+.cr-label { font-size: 11px; color: var(--text3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-right: 4px; }
+.color-dot {
+  width: 24px; height: 24px; border-radius: 50%;
+  border: 2px solid transparent; cursor: pointer;
+  transition: transform 0.2s, border-color 0.2s;
+  flex-shrink: 0;
+}
+.color-dot:hover { transform: scale(1.2); }
+.color-dot.active { border-color: var(--text); transform: scale(1.15); }
+.size-btn {
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+  padding: 4px 10px; font-size: 12px; color: var(--text2); cursor: pointer;
+  font-family: var(--font); font-weight: 600;
+  transition: background 0.2s, color 0.2s;
+}
+.size-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.cr-spacer { flex: 1; }
+.opacity-row { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text3); }
+.opacity-row input[type=range] { width: 80px; accent-color: var(--accent); }
+
+/* ── MAIN CONTENT AREA ── */
+.content-area {
+  flex: 1; display: flex; overflow: hidden; position: relative;
+}
+
+/* ── SIDEBAR (iPad/Tab only) ── */
+.sidebar {
+  width: 0; overflow: hidden;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  transition: width 0.3s cubic-bezier(.22,1,.36,1);
+  flex-shrink: 0;
+  display: flex; flex-direction: column;
+}
+.sidebar.open { width: 200px; }
+body.theme-iphone .sidebar,
+body.theme-samsung-a .sidebar { display: none; }
+
+.sidebar-section { padding: 16px 14px; }
+.sidebar-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text3); margin-bottom: 12px; }
+.sidebar-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: 10px;
+  cursor: pointer; font-size: 14px; font-weight: 500; color: var(--text2);
+  transition: background 0.2s, color 0.2s; margin-bottom: 2px;
+}
+.sidebar-item:hover { background: var(--surface2); color: var(--text); }
+.sidebar-item.active { background: color-mix(in srgb, var(--accent) 15%, transparent); color: var(--accent); }
+.sidebar-item .si-icon { font-size: 18px; }
+.sidebar-divider { height: 1px; background: var(--border); margin: 8px 14px; }
+
+/* ── PDF VIEWPORT ── */
+.pdf-viewport {
+  flex: 1; overflow: auto; position: relative;
+  background: var(--surface2);
+  display: flex; flex-direction: column; align-items: center;
+  padding: 20px;
+  gap: 16px;
+}
+body.theme-ipad .pdf-viewport,
+body.theme-samsung-tab .pdf-viewport { padding: 24px 40px; }
+
+/* Custom scrollbar */
+.pdf-viewport::-webkit-scrollbar { width: 6px; }
+.pdf-viewport::-webkit-scrollbar-track { background: transparent; }
+.pdf-viewport::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+
+/* Page wrapper */
+.pdf-page-wrap {
+  position: relative; flex-shrink: 0;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2), 0 0 0 1px rgba(0,0,0,0.08);
+  border-radius: 4px; overflow: hidden;
+  background: #fff;
+  animation: pageIn 0.4s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes pageIn {
+  from { opacity:0; transform:translateY(20px) scale(0.98); }
+  to   { opacity:1; transform:translateY(0) scale(1); }
+}
+.pdf-page-wrap canvas { display: block; }
+
+/* Annotation canvas overlay */
+.anno-canvas {
+  position: absolute; inset: 0;
+  pointer-events: none;
+}
+.anno-canvas.drawing { pointer-events: all; cursor: crosshair; }
+.anno-canvas.erasing { pointer-events: all; cursor: cell; }
+.anno-canvas.highlighting { pointer-events: all; cursor: text; }
+
+/* ── FLOATING TOOLBAR (mobile) ── */
+.float-toolbar {
+  position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 8px; align-items: center;
+  background: var(--toolbar-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 8px 16px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+  z-index: 20;
+  animation: floatIn 0.4s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes floatIn {
+  from { opacity:0; transform:translateX(-50%) translateY(20px); }
+  to   { opacity:1; transform:translateX(-50%) translateY(0); }
+}
+body.theme-ipad .float-toolbar,
+body.theme-samsung-tab .float-toolbar { display: none; }
+
+.ft-btn {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: transparent; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; color: var(--text2);
+  transition: background 0.2s, transform 0.15s;
+}
+.ft-btn:hover { background: var(--surface2); }
+.ft-btn:active { transform: scale(0.88); }
+.ft-btn.active { background: color-mix(in srgb, var(--accent) 25%, transparent); }
+.ft-sep { width: 1px; height: 24px; background: var(--border); }
+
+/* ── BOTTOM NAV (mobile) ── */
+.bottom-nav {
+  height: var(--nav-bar); min-height: var(--nav-bar);
+  display: flex; align-items: flex-start; justify-content: space-around;
+  padding: 8px 0 0;
+  background: var(--toolbar-bg);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border);
+  flex-shrink: 0; z-index: 9;
+}
+body.theme-ipad .bottom-nav,
+body.theme-samsung-tab .bottom-nav { display: none; }
+
+.bn-item {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  cursor: pointer; padding: 4px 12px;
+  transition: opacity 0.2s;
+}
+.bn-item:hover { opacity: 0.8; }
+.bn-icon { font-size: 22px; }
+.bn-label { font-size: 10px; color: var(--text3); font-weight: 500; }
+.bn-item.active .bn-icon { filter: drop-shadow(0 0 6px var(--accent)); }
+.bn-item.active .bn-label { color: var(--accent); }
+
+/* Samsung bottom nav */
+body.theme-samsung-a .bottom-nav {
+  padding: 4px 0;
+  background: var(--surface);
+}
+body.theme-samsung-a .bn-item .bn-icon { font-size: 20px; }
+body.theme-samsung-a .bn-item .bn-label { display: none; }
+
+/* ── UPLOAD / EMPTY STATE ── */
+.empty-state {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 16px; padding: 40px 20px; text-align: center;
+}
+.es-icon { font-size: 64px; opacity: 0.3; animation: esBob 3s ease-in-out infinite; }
+@keyframes esBob {
+  0%,100% { transform:translateY(0); }
+  50% { transform:translateY(-10px); }
+}
+.es-title { font-size: 20px; font-weight: 700; color: var(--text2); }
+.es-sub { font-size: 14px; color: var(--text3); max-width: 280px; line-height: 1.5; }
+.es-btn {
+  margin-top: 8px; padding: 14px 28px;
+  background: var(--accent); border: none; border-radius: 12px;
+  color: #fff; font-family: var(--font); font-weight: 700; font-size: 15px;
+  cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--accent) 40%, transparent);
+}
+.es-btn:hover { transform: translateY(-2px); }
+.es-btn:active { transform: scale(0.97); }
+
+/* ── NOTES PANEL ── */
+.notes-panel {
+  position: absolute; right: 0; top: 0; bottom: 0;
+  width: 0; overflow: hidden;
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  z-index: 15;
+  display: flex; flex-direction: column;
+  transition: width 0.35s cubic-bezier(.22,1,.36,1);
+}
+.notes-panel.open { width: 300px; }
+body.theme-iphone .notes-panel.open,
+body.theme-samsung-a .notes-panel.open { width: 100%; }
+
+.np-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 16px; border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.np-header h3 { flex: 1; font-size: 16px; font-weight: 700; }
+.np-close {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--surface2); border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; color: var(--text2); transition: background 0.2s;
+}
+.np-close:hover { background: var(--surface3); }
+
+.np-body { flex: 1; display: flex; flex-direction: column; padding: 16px; gap: 12px; overflow: hidden; }
+.np-textarea {
+  flex: 1; background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 12px; padding: 14px; color: var(--text);
+  font-family: var(--font); font-size: 14px; line-height: 1.6;
+  resize: none; outline: none;
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+.np-textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent); }
+.np-textarea::placeholder { color: var(--text3); }
+
+.np-actions { display: flex; gap: 8px; }
+.np-btn {
+  flex: 1; padding: 10px; border-radius: 10px; border: none;
+  font-family: var(--font); font-weight: 700; font-size: 13px;
+  cursor: pointer; transition: opacity 0.2s, transform 0.15s;
+}
+.np-btn:active { transform: scale(0.97); }
+.np-btn.primary { background: var(--accent); color: #fff; }
+.np-btn.secondary { background: var(--surface2); color: var(--text2); }
+
+.np-saved { display: flex; flex-direction: column; gap: 8px; overflow-y: auto; max-height: 200px; }
+.np-saved::-webkit-scrollbar { width: 4px; }
+.np-saved::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+.note-item {
+  background: var(--surface2); border-radius: 10px; padding: 12px;
+  border-left: 3px solid var(--accent);
+  animation: noteIn 0.3s cubic-bezier(.22,1,.36,1) both;
+  position: relative;
+}
+@keyframes noteIn {
+  from { opacity:0;transform:translateX(20px); }
+  to   { opacity:1;transform:translateX(0); }
+}
+.note-text { font-size: 13px; color: var(--text2); line-height: 1.5; word-break: break-word; }
+.note-date { font-size: 10px; color: var(--text3); margin-top: 6px; }
+.note-del {
+  position:absolute;top:8px;right:8px;background:none;border:none;
+  color:var(--text3);cursor:pointer;font-size:12px;transition:color 0.2s;
+}
+.note-del:hover { color: var(--accent3); }
+
+/* ── ZOOM CONTROLS ── */
+.zoom-controls {
+  position: absolute; bottom: 80px; right: 16px; z-index: 20;
+  display: flex; flex-direction: column; gap: 4px;
+  background: var(--toolbar-bg); border: 1px solid var(--border);
+  border-radius: 12px; padding: 4px; backdrop-filter: blur(20px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+}
+body.theme-ipad .zoom-controls,
+body.theme-samsung-tab .zoom-controls { bottom: 24px; right: 24px; }
+.zoom-btn {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: transparent; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; color: var(--text2); font-weight: 700;
+  transition: background 0.2s, color 0.2s;
+}
+.zoom-btn:hover { background: var(--surface2); color: var(--text); }
+.zoom-label { font-size: 10px; color: var(--text3); text-align: center; font-weight: 700; padding: 2px 0; }
+
+/* ── PAGE NAVIGATOR ── */
+.page-nav {
+  position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 12px; z-index: 20;
+  background: var(--toolbar-bg); border: 1px solid var(--border);
+  border-radius: 99px; padding: 6px 16px;
+  backdrop-filter: blur(20px);
+  font-size: 13px; font-weight: 600; color: var(--text2);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+}
+body.theme-ipad .page-nav,
+body.theme-samsung-tab .page-nav { bottom: 24px; }
+.pn-btn {
+  background: none; border: none; cursor: pointer;
+  color: var(--accent); font-size: 18px; padding: 2px 4px;
+  transition: opacity 0.2s; display: flex; align-items: center;
+}
+.pn-btn:disabled { opacity: 0.3; cursor: default; }
+.pn-input {
+  width: 36px; text-align: center;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 6px; padding: 2px 4px; color: var(--text);
+  font-family: var(--font); font-size: 13px; font-weight: 600;
+  outline: none;
+}
+.pn-input:focus { border-color: var(--accent); }
+
+/* ── LOADING OVERLAY ── */
+.loading-overlay {
+  position: absolute; inset: 0; z-index: 30;
+  background: var(--surface2);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 16px;
+}
+.loading-overlay.hidden { display: none; }
+.loading-spinner {
+  width: 48px; height: 48px; border-radius: 50%;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { font-size: 14px; color: var(--text3); font-weight: 600; }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 12px 20px;
+  font-size: 13px; font-weight: 600; color: var(--text2);
+  z-index: 100; opacity: 0;
+  transition: opacity 0.3s, transform 0.3s;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── THEME SWITCHER BTN ── */
+.theme-switch-btn {
+  position: fixed; top: 20px; left: 20px; z-index: 999;
+  background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 12px; padding: 10px 16px;
+  color: #fff; font-family: 'Nunito', sans-serif; font-weight: 700;
+  font-size: 13px; cursor: pointer; backdrop-filter: blur(10px);
+  transition: background 0.2s;
+  display: none;
+}
+.theme-switch-btn:hover { background: rgba(0,0,0,0.7); }
+.theme-switch-btn.visible { display: flex; align-items: center; gap: 8px; }
+
+/* ── HIGHLIGHT TOOLTIP ── */
+.highlight-tip {
+  position: absolute; z-index: 50;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 6px 8px;
+  display: none; gap: 6px; flex-direction: row;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  backdrop-filter: blur(10px);
+}
+.highlight-tip.show { display: flex; }
+.ht-color {
+  width: 22px; height: 22px; border-radius: 50%; cursor: pointer;
+  border: 2px solid transparent; transition: transform 0.2s;
+}
+.ht-color:hover { transform: scale(1.2); border-color: var(--text); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity:0;transform:translateY(10px); }
+  to   { opacity:1;transform:translateY(0); }
+}
+@keyframes scaleIn {
+  from { opacity:0;transform:scale(0.9); }
+  to   { opacity:1;transform:scale(1); }
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px) {
+  .ts-grid { grid-template-columns: repeat(2,1fr); }
+}
+@media(max-width:500px) {
+  .ts-grid { grid-template-columns: 1fr 1fr; gap:12px; }
+  .device-card { padding: 20px 14px; }
+  .dc-device { font-size:48px;margin-bottom:12px; }
+  .dc-features { display:none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ THEME SELECTOR ═══════════════════ -->
+<div id="themeScreen">
+  <div class="ts-bg">
+    <div class="ts-orb"></div>
+    <div class="ts-orb"></div>
+    <div class="ts-orb"></div>
+  </div>
+
+  <div class="ts-header">
+    <div class="ts-logo">
+      <div class="ts-logo-icon">📖</div>
+      <span class="ts-logo-text">NoteReader</span>
+    </div>
+    <p class="ts-subtitle">Choose your device experience</p>
+  </div>
+
+  <div class="ts-grid">
+    <!-- iPhone 17 -->
+    <div class="device-card" data-theme="iphone" onclick="selectTheme('iphone')">
+      <span class="dc-device">📱</span>
+      <div class="dc-brand">iPhone 17</div>
+      <div class="dc-model">Apple iOS 19</div>
+      <div class="dc-badge">⬛ Dynamic Island</div>
+      <div class="dc-features">
+        <div class="dc-feat">Apple Pencil feel</div>
+        <div class="dc-feat">iOS Notes style</div>
+        <div class="dc-feat">Haptic toolbar</div>
+      </div>
+      <button class="dc-choose">Open in iPhone</button>
+    </div>
+
+    <!-- Samsung A24 Ultra -->
+    <div class="device-card" data-theme="samsung-a" onclick="selectTheme('samsung-a')">
+      <span class="dc-device">🟢</span>
+      <div class="dc-brand">Samsung A24 Ultra</div>
+      <div class="dc-model">Android · One UI 7</div>
+      <div class="dc-badge">✏️ S Pen Ready</div>
+      <div class="dc-features">
+        <div class="dc-feat">S Pen annotation</div>
+        <div class="dc-feat">Samsung Notes UI</div>
+        <div class="dc-feat">Edge panel tools</div>
+      </div>
+      <button class="dc-choose">Open in Samsung</button>
+    </div>
+
+    <!-- iPad -->
+    <div class="device-card" data-theme="ipad" onclick="selectTheme('ipad')">
+      <span class="dc-device">🖥️</span>
+      <div class="dc-brand">iPad</div>
+      <div class="dc-model">iPadOS 19 · Pro</div>
+      <div class="dc-badge">🍎 Stage Manager</div>
+      <div class="dc-features">
+        <div class="dc-feat">Split-view sidebar</div>
+        <div class="dc-feat">Full-screen canvas</div>
+        <div class="dc-feat">Apple Pencil Pro</div>
+      </div>
+      <button class="dc-choose">Open in iPad</button>
+    </div>
+
+    <!-- Samsung Tab -->
+    <div class="device-card" data-theme="samsung-tab" onclick="selectTheme('samsung-tab')">
+      <span class="dc-device">📋</span>
+      <div class="dc-brand">Galaxy Tab S9</div>
+      <div class="dc-model">Android · DeX Mode</div>
+      <div class="dc-badge">🔵 DeX Desktop</div>
+      <div class="dc-features">
+        <div class="dc-feat">DeX sidebar</div>
+        <div class="dc-feat">Wide canvas mode</div>
+        <div class="dc-feat">Multi-window</div>
+      </div>
+      <button class="dc-choose">Open in Tab</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ THEME SWITCH BUTTON ═══════════════════ -->
+<button class="theme-switch-btn" id="themeSwitchBtn" onclick="backToThemes()">
+  🎨 Change Theme
+</button>
+
+<!-- ═══════════════════ MAIN APP ═══════════════════ -->
+<div id="app">
+
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span class="sb-left" id="sbTime">9:41</span>
+    <span class="sb-right">
+      <span class="sb-icon">📶</span>
+      <span class="sb-icon">🔋</span>
+    </span>
+  </div>
+
+  <!-- Top Toolbar -->
+  <div class="top-toolbar">
+    <button class="tb-btn" id="btnSidebar" title="Toggle Sidebar" onclick="toggleSidebar()">☰</button>
+    <div class="tb-sep"></div>
+
+    <!-- Upload -->
+    <button class="tb-btn" title="Open PDF" onclick="document.getElementById('fileInput').click()">📂</button>
+    <input type="file" id="fileInput" accept=".pdf" style="display:none" onchange="loadPDF(this)">
+
+    <div class="tb-sep"></div>
+
+    <!-- Drawing tools -->
+    <button class="tb-btn" id="toolPen"       title="Pen"        onclick="setTool('pen')">✏️</button>
+    <button class="tb-btn" id="toolHighlight" title="Highlighter" onclick="setTool('highlight')">🖊️</button>
+    <button class="tb-btn" id="toolEraser"    title="Eraser"     onclick="setTool('eraser')">🧹</button>
+    <button class="tb-btn" id="toolSelect"    title="Select/Cursor" onclick="setTool('select')">👆</button>
+
+    <div class="tb-sep"></div>
+
+    <button class="tb-btn" title="Undo" onclick="undo()">↩️</button>
+    <button class="tb-btn" title="Redo" onclick="redo()">↪️</button>
+    <button class="tb-btn" title="Clear page" onclick="clearPage()">🗑️</button>
+
+    <div class="tb-sep"></div>
+
+    <span class="tb-title" id="docTitle">No document open</span>
+
+    <div class="tb-sep"></div>
+
+    <button class="tb-btn" title="Notes" onclick="toggleNotes()">📝</button>
+    <button class="tb-btn" title="Save annotations" onclick="saveAnnotations()">💾</button>
+    <button class="tb-btn" title="Export" onclick="exportPage()">📤</button>
+  </div>
+
+  <!-- Color / Size Row -->
+  <div class="color-row" id="colorRow">
+    <span class="cr-label">Color</span>
+    <div class="color-dot active" style="background:#000000" data-color="#000000" onclick="setColor(this)"></div>
+    <div class="color-dot" style="background:#1a73e8" data-color="#1a73e8" onclick="setColor(this)"></div>
+    <div class="color-dot" style="background:#e53935" data-color="#e53935" onclick="setColor(this)"></div>
+    <div class="color-dot" style="background:#43a047" data-color="#43a047" onclick="setColor(this)"></div>
+    <div class="color-dot" style="background:#fb8c00" data-color="#fb8c00" onclick="setColor(this)"></div>
+    <div class="color-dot" style="background:#8e24aa" data-color="#8e24aa" onclick="setColor(this)"></div>
+    <div class="color-dot" style="background:#f06292" data-color="#f06292" onclick="setColor(this)"></div>
+    <div class="color-dot" style="background:#ffffff" data-color="#ffffff" style="border:1px solid #ccc" onclick="setColor(this)"></div>
+
+    <div class="tb-sep" style="margin:0 4px"></div>
+    <span class="cr-label">Size</span>
+    <button class="size-btn"        data-size="2"  onclick="setSize(this)">S</button>
+    <button class="size-btn active" data-size="4"  onclick="setSize(this)">M</button>
+    <button class="size-btn"        data-size="8"  onclick="setSize(this)">L</button>
+    <button class="size-btn"        data-size="16" onclick="setSize(this)">XL</button>
+
+    <div class="cr-spacer"></div>
+    <div class="opacity-row">
+      <span>Opacity</span>
+      <input type="range" min="10" max="100" value="100" id="opacitySlider" oninput="setOpacity(this.value)">
+      <span id="opacityVal">100%</span>
+    </div>
+  </div>
+
+  <!-- Content Area -->
+  <div class="content-area">
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-title">Tools</div>
+        <div class="sidebar-item active" onclick="setTool('select')"><span class="si-icon">👆</span> Select</div>
+        <div class="sidebar-item" onclick="setTool('pen')"><span class="si-icon">✏️</span> Pen</div>
+        <div class="sidebar-item" onclick="setTool('highlight')"><span class="si-icon">🖊️</span> Highlight</div>
+        <div class="sidebar-item" onclick="setTool('eraser')"><span class="si-icon">🧹</span> Eraser</div>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section">
+        <div class="sidebar-title">Document</div>
+        <div class="sidebar-item" onclick="document.getElementById('fileInput').click()"><span class="si-icon">📂</span> Open PDF</div>
+        <div class="sidebar-item" onclick="saveAnnotations()"><span class="si-icon">💾</span> Save</div>
+        <div class="sidebar-item" onclick="exportPage()"><span class="si-icon">📤</span> Export</div>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section">
+        <div class="sidebar-title">View</div>
+        <div class="sidebar-item" onclick="zoomIn()"><span class="si-icon">🔍</span> Zoom In</div>
+        <div class="sidebar-item" onclick="zoomOut()"><span class="si-icon">🔎</span> Zoom Out</div>
+        <div class="sidebar-item" onclick="fitPage()"><span class="si-icon">⬛</span> Fit Page</div>
+        <div class="sidebar-item" onclick="toggleNotes()"><span class="si-icon">📝</span> Notes</div>
+      </div>
+    </div>
+
+    <!-- PDF Viewport -->
+    <div class="pdf-viewport" id="pdfViewport">
+
+      <!-- Empty State -->
+      <div class="empty-state" id="emptyState">
+        <div class="es-icon">📄</div>
+        <div class="es-title">No PDF Open</div>
+        <div class="es-sub">Tap the button below to open a PDF and start annotating with pen, highlighter, and notes</div>
+        <button class="es-btn" onclick="document.getElementById('fileInput').click()">📂 Open PDF File</button>
+      </div>
+
+      <!-- Loading -->
+      <div class="loading-overlay hidden" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Loading PDF…</div>
+      </div>
+
+    </div>
+
+    <!-- Notes Panel -->
+    <div class="notes-panel" id="notesPanel">
+      <div class="np-header">
+        <span style="font-size:20px">📝</span>
+        <h3>Notes</h3>
+        <button class="np-close" onclick="toggleNotes()">✕</button>
+      </div>
+      <div class="np-body">
+        <textarea class="np-textarea" id="noteInput" placeholder="Write your note here…&#10;&#10;Thoughts, summaries, questions…" rows="6"></textarea>
+        <div class="np-actions">
+          <button class="np-btn primary" onclick="saveNote()">💾 Save Note</button>
+          <button class="np-btn secondary" onclick="clearNote()">Clear</button>
+        </div>
+        <div class="sidebar-title" style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin:4px 0 8px">Saved Notes</div>
+        <div class="np-saved" id="savedNotes"></div>
+      </div>
+    </div>
+
+    <!-- Zoom Controls -->
+    <div class="zoom-controls" id="zoomControls" style="display:none">
+      <button class="zoom-btn" onclick="zoomIn()" title="Zoom In">+</button>
+      <div class="zoom-label" id="zoomLabel">100%</div>
+      <button class="zoom-btn" onclick="zoomOut()" title="Zoom Out">−</button>
+      <button class="zoom-btn" onclick="fitPage()" title="Fit" style="font-size:14px">⬛</button>
+    </div>
+
+    <!-- Page Navigation -->
+    <div class="page-nav" id="pageNav" style="display:none">
+      <button class="pn-btn" id="prevBtn" onclick="prevPage()">‹</button>
+      <input class="pn-input" type="number" id="pageInput" value="1" min="1" onchange="goToPage(this.value)">
+      <span id="totalPages" style="font-size:13px;color:var(--text3)">/1</span>
+      <button class="pn-btn" id="nextBtn" onclick="nextPage()">›</button>
+    </div>
+
+    <!-- Float Toolbar (mobile) -->
+    <div class="float-toolbar" id="floatToolbar">
+      <button class="ft-btn" id="ftSelect" onclick="setTool('select')" title="Select">👆</button>
+      <button class="ft-btn active" id="ftPen" onclick="setTool('pen')" title="Pen">✏️</button>
+      <button class="ft-btn" id="ftHL" onclick="setTool('highlight')" title="Highlight">🖊️</button>
+      <button class="ft-btn" id="ftErase" onclick="setTool('eraser')" title="Eraser">🧹</button>
+      <div class="ft-sep"></div>
+      <button class="ft-btn" onclick="undo()" title="Undo">↩️</button>
+      <button class="ft-btn" onclick="toggleNotes()" title="Notes">📝</button>
+    </div>
+  </div>
+
+  <!-- Bottom Nav -->
+  <div class="bottom-nav" id="bottomNav">
+    <div class="bn-item active" onclick="setTool('select')">
+      <span class="bn-icon">👆</span>
+      <span class="bn-label">Select</span>
+    </div>
+    <div class="bn-item" onclick="setTool('pen')">
+      <span class="bn-icon">✏️</span>
+      <span class="bn-label">Pen</span>
+    </div>
+    <div class="bn-item" onclick="setTool('highlight')">
+      <span class="bn-icon">🖊️</span>
+      <span class="bn-label">Highlight</span>
+    </div>
+    <div class="bn-item" onclick="document.getElementById('fileInput').click()">
+      <span class="bn-icon">📂</span>
+      <span class="bn-label">Open</span>
+    </div>
+    <div class="bn-item" onclick="toggleNotes()">
+      <span class="bn-icon">📝</span>
+      <span class="bn-label">Notes</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ══════════════════════════════════════════════════
+   PDF.js setup
+══════════════════════════════════════════════════ */
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+/* ══════════════════════════════════════════════════
+   STATE
+══════════════════════════════════════════════════ */
+let currentTheme   = '';
+let pdfDoc         = null;
+let totalPageCount = 0;
+let currentPage    = 1;
+let currentScale   = 1.2;
+let currentTool    = 'pen';
+let currentColor   = '#000000';
+let currentSize    = 4;
+let currentOpacity = 1.0;
+let isDrawing      = false;
+let lastX = 0, lastY = 0;
+let annotations    = {};   // { pageNum: [{type,points,color,size,opacity}] }
+let undoStack      = {};   // { pageNum: [snapshots] }
+let redoStack      = {};
+let notes          = [];
+let activePath     = [];
+let pageCanvases   = {};   // { pageNum: {pdfCanvas, annoCanvas, ctx} }
+
+/* ══════════════════════════════════════════════════
+   THEME SELECTION
+══════════════════════════════════════════════════ */
+function selectTheme(theme) {
+  currentTheme = theme;
+  document.body.className = 'theme-' + theme;
+
+  const ts = document.getElementById('themeScreen');
+  ts.classList.add('exit');
+
+  setTimeout(() => {
+    ts.style.display = 'none';
+    document.getElementById('app').classList.add('visible');
+    document.getElementById('themeSwitchBtn').classList.add('visible');
+
+    // Auto-open sidebar on tablets
+    if (theme === 'ipad' || theme === 'samsung-tab') {
+      document.getElementById('sidebar').classList.add('open');
+      document.getElementById('zoomControls').style.display = 'flex';
+    }
+
+    updateStatusBar();
+  }, 500);
+
+  // Apply theme-specific font
+  document.getElementById('app').style.fontFamily = getComputedStyle(document.documentElement).getPropertyValue('--font') || '';
+}
+
+function backToThemes() {
+  document.getElementById('app').classList.remove('visible');
+  document.getElementById('themeSwitchBtn').classList.remove('visible');
+  const ts = document.getElementById('themeScreen');
+  ts.style.display = 'flex';
+  ts.classList.remove('exit');
+  ts.style.opacity = '';
+  ts.style.transform = '';
+}
+
+/* ══════════════════════════════════════════════════
+   STATUS BAR CLOCK
+══════════════════════════════════════════════════ */
+function updateStatusBar() {
+  const now = new Date();
+  let h = now.getHours(), m = now.getMinutes();
+  document.getElementById('sbTime').textContent =
+    h.toString().padStart(2,'0') + ':' + m.toString().padStart(2,'0');
+}
+setInterval(updateStatusBar, 30000);
+
+/* ══════════════════════════════════════════════════
+   PDF LOADING
+══════════════════════════════════════════════════ */
+async function loadPDF(input) {
+  const file = input.files[0];
+  if (!file) return;
+
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('loadingOverlay').classList.remove('hidden');
+
+  const arrayBuffer = await file.arrayBuffer();
+  pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  totalPageCount = pdfDoc.numPages;
+  currentPage    = 1;
+  annotations    = {};
+  undoStack      = {};
+  redoStack      = {};
+  pageCanvases   = {};
+
+  // Clear viewport
+  const vp = document.getElementById('pdfViewport');
+  Array.from(vp.children).forEach(c => {
+    if (!c.id) vp.removeChild(c);
+  });
+
+  document.getElementById('loadingOverlay').classList.add('hidden');
+  document.getElementById('totalPages').textContent = '/' + totalPageCount;
+  document.getElementById('pageNav').style.display = 'flex';
+  document.getElementById('zoomControls').style.display = 'flex';
+  document.getElementById('docTitle').textContent = file.name.replace('.pdf','');
+
+  await renderPage(currentPage);
+  updatePageNav();
+  showToast('📄 PDF loaded — ' + totalPageCount + ' pages');
+
+  // Preload adjacent pages
+  if (totalPageCount > 1) renderPage(2);
+}
+
+/* ══════════════════════════════════════════════════
+   RENDER A SINGLE PAGE
+══════════════════════════════════════════════════ */
+async function renderPage(pageNum) {
+  if (!pdfDoc || pageNum < 1 || pageNum > totalPageCount) return;
+
+  const page     = await pdfDoc.getPage(pageNum);
+  const viewport = page.getViewport({ scale: currentScale });
+
+  // Create wrapper
+  let wrap = document.getElementById('page-wrap-' + pageNum);
+  if (!wrap) {
+    wrap = document.createElement('div');
+    wrap.className = 'pdf-page-wrap';
+    wrap.id = 'page-wrap-' + pageNum;
+    wrap.style.width  = viewport.width + 'px';
+    wrap.style.height = viewport.height + 'px';
+    wrap.style.animationDelay = ((pageNum - 1) * 0.08) + 's';
+    document.getElementById('pdfViewport').appendChild(wrap);
+  } else {
+    wrap.style.width  = viewport.width + 'px';
+    wrap.style.height = viewport.height + 'px';
+  }
+
+  // PDF Canvas
+  let pdfCanvas = wrap.querySelector('.pdf-canvas');
+  if (!pdfCanvas) {
+    pdfCanvas = document.createElement('canvas');
+    pdfCanvas.className = 'pdf-canvas';
+    wrap.appendChild(pdfCanvas);
+  }
+  pdfCanvas.width  = viewport.width;
+  pdfCanvas.height = viewport.height;
+  const pdfCtx = pdfCanvas.getContext('2d');
+  await page.render({ canvasContext: pdfCtx, viewport }).promise;
+
+  // Annotation Canvas
+  let annoCanvas = wrap.querySelector('.anno-canvas');
+  if (!annoCanvas) {
+    annoCanvas = document.createElement('canvas');
+    annoCanvas.className = 'anno-canvas';
+    annoCanvas.width  = viewport.width;
+    annoCanvas.height = viewport.height;
+    wrap.appendChild(annoCanvas);
+    setupCanvasEvents(annoCanvas, pageNum);
+  } else {
+    annoCanvas.width  = viewport.width;
+    annoCanvas.height = viewport.height;
+  }
+
+  pageCanvases[pageNum] = {
+    pdfCanvas, annoCanvas,
+    ctx: annoCanvas.getContext('2d'),
+    w: viewport.width, h: viewport.height
+  };
+
+  // Redraw existing annotations
+  redrawAnnotations(pageNum);
+  updateAnnotationMode();
+}
+
+/* ══════════════════════════════════════════════════
+   RENDER ALL PAGES
+══════════════════════════════════════════════════ */
+async function renderAllPages() {
+  if (!pdfDoc) return;
+  document.getElementById('loadingOverlay').classList.remove('hidden');
+  const vp = document.getElementById('pdfViewport');
+  Array.from(vp.children).forEach(c => { if (!c.id) vp.removeChild(c); });
+  pageCanvases = {};
+  for (let i = 1; i <= totalPageCount; i++) await renderPage(i);
+  document.getElementById('loadingOverlay').classList.add('hidden');
+}
+
+/* ══════════════════════════════════════════════════
+   CANVAS DRAWING EVENTS
+══════════════════════════════════════════════════ */
+function setupCanvasEvents(canvas, pageNum) {
+  const getPos = (e) => {
+    const r = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / r.width;
+    const scaleY = canvas.height / r.height;
+    const src = e.touches ? e.touches[0] : e;
+    return { x: (src.clientX - r.left) * scaleX, y: (src.clientY - r.top) * scaleY };
+  };
+
+  const startDraw = (e) => {
+    if (currentTool === 'select') return;
+    e.preventDefault();
+    isDrawing = true;
+    const pos = getPos(e);
+    lastX = pos.x; lastY = pos.y;
+    activePath = [{ x: pos.x, y: pos.y }];
+
+    // Save undo snapshot before drawing
+    pushUndo(pageNum);
+  };
+
+  const draw = (e) => {
+    if (!isDrawing || currentTool === 'select') return;
+    e.preventDefault();
+    const pos = getPos(e);
+    const { ctx } = pageCanvases[pageNum];
+
+    if (currentTool === 'eraser') {
+      ctx.clearRect(pos.x - currentSize * 4, pos.y - currentSize * 4, currentSize * 8, currentSize * 8);
+    } else {
+      ctx.beginPath();
+      ctx.moveTo(lastX, lastY);
+      ctx.lineTo(pos.x, pos.y);
+
+      if (currentTool === 'highlight') {
+        ctx.strokeStyle = hexToRgba(currentColor, Math.min(currentOpacity, 0.45));
+        ctx.lineWidth = currentSize * 6;
+        ctx.lineCap = 'square';
+        ctx.globalCompositeOperation = 'multiply';
+      } else {
+        ctx.strokeStyle = hexToRgba(currentColor, currentOpacity);
+        ctx.lineWidth = currentSize;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.globalCompositeOperation = 'source-over';
+      }
+      ctx.stroke();
+      activePath.push({ x: pos.x, y: pos.y });
+    }
+
+    lastX = pos.x; lastY = pos.y;
+  };
+
+  const endDraw = (e) => {
+    if (!isDrawing) return;
+    isDrawing = false;
+    ctx_reset(pageNum);
+
+    if (currentTool !== 'eraser' && activePath.length > 1) {
+      if (!annotations[pageNum]) annotations[pageNum] = [];
+      annotations[pageNum].push({
+        type: currentTool,
+        points: [...activePath],
+        color: currentColor,
+        size: currentSize,
+        opacity: currentOpacity
+      });
+    } else if (currentTool === 'eraser') {
+      // Save erased state as annotation snapshot
+      if (!annotations[pageNum]) annotations[pageNum] = [];
+      annotations[pageNum].push({ type: 'erase_snapshot', imageData: getImageData(pageNum) });
+    }
+
+    activePath = [];
+    redoStack[pageNum] = [];
+  };
+
+  canvas.addEventListener('mousedown',  startDraw, { passive: false });
+  canvas.addEventListener('mousemove',  draw,      { passive: false });
+  canvas.addEventListener('mouseup',    endDraw);
+  canvas.addEventListener('mouseleave', endDraw);
+  canvas.addEventListener('touchstart', startDraw, { passive: false });
+  canvas.addEventListener('touchmove',  draw,      { passive: false });
+  canvas.addEventListener('touchend',   endDraw);
+}
+
+function ctx_reset(pageNum) {
+  const { ctx } = pageCanvases[pageNum] || {};
+  if (!ctx) return;
+  ctx.globalCompositeOperation = 'source-over';
+}
+
+function hexToRgba(hex, alpha) {
+  const r = parseInt(hex.slice(1,3),16);
+  const g = parseInt(hex.slice(3,5),16);
+  const b = parseInt(hex.slice(5,7),16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
+function getImageData(pageNum) {
+  const { ctx, w, h } = pageCanvases[pageNum] || {};
+  if (!ctx) return null;
+  return ctx.getImageData(0, 0, w, h);
+}
+
+/* ══════════════════════════════════════════════════
+   DRAW ANNOTATIONS FROM DATA
+══════════════════════════════════════════════════ */
+function redrawAnnotations(pageNum) {
+  const pc = pageCanvases[pageNum];
+  if (!pc) return;
+  const { ctx, w, h } = pc;
+  ctx.clearRect(0, 0, w, h);
+
+  const anns = annotations[pageNum] || [];
+  for (const ann of anns) {
+    if (ann.type === 'erase_snapshot' && ann.imageData) {
+      ctx.putImageData(ann.imageData, 0, 0);
+      continue;
+    }
+    const pts = ann.points;
+    if (!pts || pts.length < 2) continue;
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x, pts[0].y);
+    for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
+
+    if (ann.type === 'highlight') {
+      ctx.strokeStyle = hexToRgba(ann.color, Math.min(ann.opacity, 0.45));
+      ctx.lineWidth = ann.size * 6;
+      ctx.lineCap = 'square';
+      ctx.globalCompositeOperation = 'multiply';
+    } else {
+      ctx.strokeStyle = hexToRgba(ann.color, ann.opacity);
+      ctx.lineWidth = ann.size;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.globalCompositeOperation = 'source-over';
+    }
+    ctx.stroke();
+    ctx_reset(pageNum);
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   UNDO / REDO
+══════════════════════════════════════════════════ */
+function pushUndo(pageNum) {
+  if (!undoStack[pageNum]) undoStack[pageNum] = [];
+  const snap = JSON.parse(JSON.stringify(annotations[pageNum] || []));
+  undoStack[pageNum].push(snap);
+  if (undoStack[pageNum].length > 30) undoStack[pageNum].shift();
+}
+
+function undo() {
+  if (!undoStack[currentPage] || undoStack[currentPage].length === 0) {
+    showToast('Nothing to undo'); return;
+  }
+  if (!redoStack[currentPage]) redoStack[currentPage] = [];
+  redoStack[currentPage].push(JSON.parse(JSON.stringify(annotations[currentPage] || [])));
+  annotations[currentPage] = undoStack[currentPage].pop();
+  redrawAnnotations(currentPage);
+  showToast('↩️ Undone');
+}
+
+function redo() {
+  if (!redoStack[currentPage] || redoStack[currentPage].length === 0) {
+    showToast('Nothing to redo'); return;
+  }
+  if (!undoStack[currentPage]) undoStack[currentPage] = [];
+  undoStack[currentPage].push(JSON.parse(JSON.stringify(annotations[currentPage] || [])));
+  annotations[currentPage] = redoStack[currentPage].pop();
+  redrawAnnotations(currentPage);
+  showToast('↪️ Redone');
+}
+
+function clearPage() {
+  if (!confirm('Clear all annotations on this page?')) return;
+  pushUndo(currentPage);
+  annotations[currentPage] = [];
+  redrawAnnotations(currentPage);
+  showToast('🗑️ Page cleared');
+}
+
+/* ══════════════════════════════════════════════════
+   TOOL MANAGEMENT
+══════════════════════════════════════════════════ */
+function setTool(tool) {
+  currentTool = tool;
+  updateAnnotationMode();
+
+  // Update toolbar buttons
+  ['Pen','Highlight','Eraser','Select'].forEach(t => {
+    const el = document.getElementById('tool' + t);
+    if (el) el.classList.toggle('active', tool === t.toLowerCase());
+  });
+
+  // Update float toolbar
+  ['ftSelect','ftPen','ftHL','ftErase'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('active');
+  });
+  const map = { select:'ftSelect', pen:'ftPen', highlight:'ftHL', eraser:'ftErase' };
+  if (map[tool]) document.getElementById(map[tool])?.classList.add('active');
+
+  // Update bottom nav
+  document.querySelectorAll('.bn-item').forEach(el => el.classList.remove('active'));
+
+  // Show/hide color row based on tool
+  document.getElementById('colorRow').style.display =
+    (tool === 'select') ? 'none' : 'flex';
+
+  showToast('Tool: ' + tool.charAt(0).toUpperCase() + tool.slice(1));
+}
+
+function updateAnnotationMode() {
+  Object.values(pageCanvases).forEach(({ annoCanvas }) => {
+    annoCanvas.classList.remove('drawing','erasing','highlighting');
+    if (currentTool === 'pen')       annoCanvas.classList.add('drawing');
+    if (currentTool === 'eraser')    annoCanvas.classList.add('erasing');
+    if (currentTool === 'highlight') annoCanvas.classList.add('highlighting');
+  });
+}
+
+function setColor(el) {
+  document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
+  el.classList.add('active');
+  currentColor = el.dataset.color;
+}
+
+function setSize(el) {
+  document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  currentSize = parseInt(el.dataset.size);
+}
+
+function setOpacity(val) {
+  currentOpacity = val / 100;
+  document.getElementById('opacityVal').textContent = val + '%';
+}
+
+/* ══════════════════════════════════════════════════
+   PAGE NAVIGATION
+══════════════════════════════════════════════════ */
+async function goToPage(num) {
+  num = parseInt(num);
+  if (!pdfDoc || num < 1 || num > totalPageCount) return;
+  currentPage = num;
+  document.getElementById('pageInput').value = num;
+  document.getElementById('prevBtn').disabled = num === 1;
+  document.getElementById('nextBtn').disabled = num === totalPageCount;
+
+  // Scroll to page
+  const wrap = document.getElementById('page-wrap-' + num);
+  if (wrap) wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+async function prevPage() { if (currentPage > 1) await goToPage(currentPage - 1); }
+async function nextPage() { if (currentPage < totalPageCount) await goToPage(currentPage + 1); }
+
+function updatePageNav() {
+  document.getElementById('pageInput').value  = currentPage;
+  document.getElementById('totalPages').textContent = '/' + totalPageCount;
+  document.getElementById('prevBtn').disabled = currentPage === 1;
+  document.getElementById('nextBtn').disabled = currentPage === totalPageCount;
+}
+
+/* ══════════════════════════════════════════════════
+   ZOOM
+══════════════════════════════════════════════════ */
+function zoomIn()  { currentScale = Math.min(currentScale + 0.2, 3.0); rerenderAll(); }
+function zoomOut() { currentScale = Math.max(currentScale - 0.2, 0.5); rerenderAll(); }
+function fitPage() { currentScale = 1.0; rerenderAll(); }
+
+async function rerenderAll() {
+  document.getElementById('zoomLabel').textContent = Math.round(currentScale * 100) + '%';
+  await renderAllPages();
+}
+
+/* ══════════════════════════════════════════════════
+   SIDEBAR TOGGLE
+══════════════════════════════════════════════════ */
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+/* ══════════════════════════════════════════════════
+   NOTES PANEL
+══════════════════════════════════════════════════ */
+function toggleNotes() {
+  document.getElementById('notesPanel').classList.toggle('open');
+}
+
+function saveNote() {
+  const text = document.getElementById('noteInput').value.trim();
+  if (!text) { showToast('Write something first!'); return; }
+
+  const note = {
+    text,
+    page: currentPage,
+    date: new Date().toLocaleString()
+  };
+  notes.push(note);
+  renderNotes();
+  document.getElementById('noteInput').value = '';
+  showToast('📝 Note saved!');
+}
+
+function clearNote() {
+  document.getElementById('noteInput').value = '';
+}
+
+function renderNotes() {
+  const container = document.getElementById('savedNotes');
+  container.innerHTML = '';
+  notes.slice().reverse().forEach((note, i) => {
+    const el = document.createElement('div');
+    el.className = 'note-item';
+    el.innerHTML = `
+      <button class="note-del" onclick="deleteNote(${notes.length - 1 - i})">✕</button>
+      <div class="note-text">${escapeHtml(note.text)}</div>
+      <div class="note-date">Page ${note.page} · ${note.date}</div>
+    `;
+    container.appendChild(el);
+  });
+}
+
+function deleteNote(idx) {
+  notes.splice(idx, 1);
+  renderNotes();
+  showToast('Note deleted');
+}
+
+function escapeHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* ══════════════════════════════════════════════════
+   SAVE / EXPORT
+══════════════════════════════════════════════════ */
+function saveAnnotations() {
+  const data = { annotations, notes, scale: currentScale };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'notereader-annotations.json';
+  a.click();
+  showToast('💾 Annotations saved!');
+}
+
+function exportPage() {
+  const pc = pageCanvases[currentPage];
+  if (!pc) { showToast('No page to export'); return; }
+
+  // Merge PDF canvas + annotation canvas
+  const merged = document.createElement('canvas');
+  merged.width  = pc.w;
+  merged.height = pc.h;
+  const mCtx = merged.getContext('2d');
+  mCtx.drawImage(pc.pdfCanvas,  0, 0);
+  mCtx.drawImage(pc.annoCanvas, 0, 0);
+
+  const a = document.createElement('a');
+  a.href = merged.toDataURL('image/png');
+  a.download = 'page-' + currentPage + '-annotated.png';
+  a.click();
+  showToast('📤 Page exported!');
+}
+
+/* ══════════════════════════════════════════════════
+   TOAST
+══════════════════════════════════════════════════ */
+let toastTimer = null;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+/* ══════════════════════════════════════════════════
+   KEYBOARD SHORTCUTS
+══════════════════════════════════════════════════ */
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
+  if (e.ctrlKey || e.metaKey) {
+    if (e.key === 'z') { e.preventDefault(); undo(); }
+    if (e.key === 'y') { e.preventDefault(); redo(); }
+    if (e.key === 's') { e.preventDefault(); saveAnnotations(); }
+    if (e.key === '=') { e.preventDefault(); zoomIn(); }
+    if (e.key === '-') { e.preventDefault(); zoomOut(); }
+  }
+  if (e.key === 'p' || e.key === 'P') setTool('pen');
+  if (e.key === 'h' || e.key === 'H') setTool('highlight');
+  if (e.key === 'e' || e.key === 'E') setTool('eraser');
+  if (e.key === 's' || e.key === 'S') setTool('select');
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') nextPage();
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   prevPage();
+});
+
+/* ══════════════════════════════════════════════════
+   INTERSECTION OBSERVER — track current page
+══════════════════════════════════════════════════ */
+const pageObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id; // 'page-wrap-N'
+      const num = parseInt(id.split('-').pop());
+      if (!isNaN(num)) {
+        currentPage = num;
+        document.getElementById('pageInput').value = num;
+        document.getElementById('prevBtn').disabled = num === 1;
+        document.getElementById('nextBtn').disabled = num === totalPageCount;
+      }
+    }
+  });
+}, { root: document.getElementById('pdfViewport'), threshold: 0.4 });
+
+// Observe newly added pages
+const vpObserver = new MutationObserver(mutations => {
+  mutations.forEach(m => {
+    m.addedNodes.forEach(node => {
+      if (node.classList && node.classList.contains('pdf-page-wrap')) {
+        pageObserver.observe(node);
+      }
+    });
+  });
+});
+vpObserver.observe(document.getElementById('pdfViewport'), { childList: true });
+
+/* ══════════════════════════════════════════════════
+   DRAG & DROP
+══════════════════════════════════════════════════ */
+document.addEventListener('dragover', e => e.preventDefault());
+document.addEventListener('drop', e => {
+  e.preventDefault();
+  const file = e.dataTransfer.files[0];
+  if (file && file.type === 'application/pdf') {
+    const dt = new DataTransfer();
+    dt.items.add(file);
+    document.getElementById('fileInput').files = dt.files;
+    loadPDF(document.getElementById('fileInput'));
+  }
+});
+
+/* ══════════════════════════════════════════════════
+   INIT
+══════════════════════════════════════════════════ */
+// Default to select tool active
+document.getElementById('toolSelect').classList.add('active');
+</script>
+</body>
+</html>
